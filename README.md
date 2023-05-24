@@ -15,20 +15,27 @@ Iremos utilizar pelo menos, 4 regiões diferentes do Azure, com o objetivo de at
 1 - Criar a estrutura da VNET-HUB:
 
 ```cmd
+   # Criar um Resource Group
+   Nome: rg-azure
+   Região: East US
+   
    # VNET-HUB
    Nome: vnet-hub
    Região: East-US
    Adress Space: 10.10.0.0/16
-   
-   # Subnets
-   Subnet: AzureBastionSubnet
-   Address Space: 10.10.250.0.0/24
-   
+      
+   # Subnets   
    Subnet: sub-srv
    Address Space: 10.10.1.0.0/24
    
    Subnet: sub-db
    Address Space: 10.10.2.0.0/24
+   
+   Subnet: sub-pvtendp
+   Address Space: 10.10.3.0.0/24
+   
+   Subnet: AzureBastionSubnet
+   Address Space: 10.10.250.0.0/24
    
    Subnet: GatewaySubnet
    Address Space: 10.10.251.0.0/24
@@ -66,28 +73,138 @@ Iremos utilizar pelo menos, 4 regiões diferentes do Azure, com o objetivo de at
      
 ```
 
-
-
-
-
-2 - Após instalar seu servidor Windows Server 2022, execute o comando abaixo para realizar a instalação do IIS:
-
+## STEP02 - Deploy dos NSGs
+Criar 3 NSGs de acordo com o modelo abaixo:
+```cmd
+   Nome: nsg-hub
+   Região: east-us
+   Associar Subnet: sub-srv e sub-db
+```
 
 ```cmd
-   Install-WindowsFeature -name Web-Server -IncludeManagementTools
-
+   Nome: nsg-intra
+   Região: uk-south
+   Associar Subnet: sub-intra
 ```
-3 - Faça download da pasta do projeto utilizando o seguinte link:
 
-
-   [https://github.com/raphasi/semanapartiunuvem/archive/refs/heads/master.zip](https://github.com/raphasi/partiunuvem/archive/refs/heads/master.zip)
-
-4 - Copie a pasta "partiunuvem" para dentro do diretório c:\inetpub\wwwroot:
 ```cmd
-  C:\inetpub\wwwroot\partiunuvem 
-  
+   Nome: nsg-web
+   Região: japan-east
+   Associar Subnet: sub-web
 ```
-5 - Para os demais passos da configuração você deve acompanhar a Aula 02.
+
+## STEP03 - Deploy das VMs
+Para todas as VMs iremos o tamanho B2S e utilizar o sistema operacional Windows Server 2022.
+
+```cmd
+   # EAST US
+   Nome: vm-adds
+   Região: east-us
+   Vnet: vnet-hub
+   Subnet: sub-srv
+```
+
+```cmd
+   # UK SOUTH
+   Nome: vm-intra01
+   Região: uk-south
+   Vnet: vnet-spoke01
+   Subnet: sub-intra
+   
+   Nome: vm-intra02
+   Região: uk-south
+   Vnet: vnet-spoke01
+   Subnet: sub-intra
+```
+
+```cmd 
+   # JAPAN EAST
+   Nome: vm-web01
+   Região: japan-east
+   Vnet: vnet-spoke02
+   Subnet: sub-web
+   
+   Nome: vm-web02
+   Região: japan-east
+   Vnet: vnet-spoke02
+   Subnet: sub-web
+ ```  
+ 
+   
+2 - Deploy Azure Bastion
+
+```cmd
+   Nome: bastion01
+   Região: East US
+   SKU: Standard
+```
+
+3 - Desabilitar o firewall de todas as VMs via Run Command, usando o seguinte comando:
+
+```cmd
+Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled False
+```
+
+4 - Acessar as VMs via Bastion e realizar teste de ping entre VMs de vnets diferentes.
+
+5 - Criar peering entre as seguintes vnets:
+```cmd
+vnet-hub/vnet-spoke01 - vnet-spoke01/vnet-hub
+vnet-hub/vnet-spoke02 - vnet-spoke02/vnet-hub
+```
+4 - Realizar teste de ping entre VMs de vnets diferentes novamente.
+
+## STEP04 - Configuração de domínios e certificados
+1 - Criar um DNS Zone (Zona de DNS pública no Azure).
+
+2 - Apontar registros NS (name server) do provedor público para o Azure.
+Testar a validação do DNS com o seguinte comando:
+```cmd
+nslookup -type=SOA tftec.cloud
+```
+3 - Gerar um certificado digital válido:
+Opções:
+OPÇÃO01: https://app.zerossl.com
+OPÇÃO02: https://punchsalad.com/ssl-certificate-generator/
+
+4 - Converter o certificado para PFX:
+
+https://www.sslshopper.com/ssl-converter.html
+
+
+## STEP05 - Deploy Azure Key Vault
+1- Deploy Azure Key Vault:
+```cmd
+   Nome: kvault-certs
+   Região: east-us
+   Usar pvt enpdoint na vnet-hub e subnet sub-pvtendp 
+```
+
+2- Fazer upload do certificado PFX no Key Vault
+
+3- Criar um managed identify e conceder permissão no Key Vault como:
+```cmd
+   Secret: Get
+```
+
+## STEP06 - Deploy estrutura INTRANET
+1- Instalar IIS nas VMS vm-intra01 e vm-intra02:
+```cmd
+Install-WindowsFeature -name Web-Server -IncludeManagementTools
+```
+2- Instalar .net core:
+
+https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-aspnetcore-7.0.5-windows-hosting-bundle-installer
+
+3- Baixar código da aplicação aplicação do seguinte link do Github:
+
+https://github.com/tftec-raphael
+
+
+
+
+
+
 
 
 # Segunda Aula - Modernizando sua aplicação com Cloud
