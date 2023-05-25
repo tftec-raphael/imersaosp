@@ -333,7 +333,7 @@ az webapp deploy --resource-group <group-name> --name <app-name> --src-path <zip
 
 
 ## STEP10 - Deploy VPN Site to Site (S2S)
-1 - Criar a estrutura da VNET-ONPREMISES
+1- Criar a estrutura da VNET-ONPREMISES
 
 ```cmd
    # Criar um Resource Group
@@ -350,7 +350,7 @@ az webapp deploy --resource-group <group-name> --name <app-name> --src-path <zip
    Address Space: 192.168.1.0.0/24
 ```
 
-2 - Deploy Virtual Network Gateway
+2- Deploy Virtual Network Gateway
 ```cmd
    Nome: vng01
    Região: brazil-south
@@ -362,9 +362,24 @@ az webapp deploy --resource-group <group-name> --name <app-name> --src-path <zip
    
 OBS: Deploy pode levar mais de 30 minutos
 ```
+3- Deploy VM Firewall
+  ```cmd
+   Nome: vm-fw
+   Região: brazil-south
+   Vnet: vnet-onpremises
+   Subnet: sub-onpremises
+   ```
+4- Instalar a feature de RAS na VM-FW
+   - Criar uma interface: Azure utilizando o IP público do Virtual Network Gateway
+   - Criar rota estática para rede 10.10.0.0/16
+   - Criar rota estática para rede 10.20.0.0/16
+   - Criar rota estática para rede 10.30.0.0/16
+   - Configurar conexão persistente
+   - Configurar uma chave compartilhada para conexão VPN
 
+5- Criar um Local Network Gateway
 
-
+6- Criar um Connection
 
 
 
