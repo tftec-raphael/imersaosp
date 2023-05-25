@@ -331,6 +331,41 @@ az webapp deploy --resource-group <group-name> --name <app-name> --src-path <zip
 6- Ajustar application setting para endereço do Storage Account
 
 
+## STEP10 - Deploy VPN Site to Site (S2S)
+1 - Criar a estrutura da VNET-ONPREMISES
+
+```cmd
+   # Criar um Resource Group
+   Nome: rg-onpremises
+   Região: Brazil South
+   
+   # VNET-ONPREMISES
+   Nome: vnet-onpremises
+   Região: Brazil-South
+   Adress Space: 192.168.0.0/16
+      
+   # Subnets   
+   Subnet: sub-onpremises
+   Address Space: 192.168.1.0.0/24
+```
+
+2 - Deploy Virtual Network Gateway
+```cmd
+   Nome: vng01
+   Região: brazil-south
+   Gateway type: VPN
+   SKU: VpnGw1
+   Virtual Network: vnet-onpremises
+   Public IP address name: pip-vng01
+   Enable active-active mode: Disabled
+   
+OBS: Deploy pode levar mais de 30 minutos
+```
+
+
+
+
+
 
 
 
