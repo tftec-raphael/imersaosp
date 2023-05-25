@@ -317,6 +317,7 @@ Baixar o zip da aplicação em
 https://portal.tftecprime.com.br
 
 4- Instalar o Azure CLI
+
 Windows
 https://aka.ms/installazurecliwindows
 
