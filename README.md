@@ -312,8 +312,29 @@ Validar se a conexão está apontando para ip interno
    Pricing plan: Standard S1
    Escolher AppServicePlan já criado
 ```
+3- Deploy da aplicação
+Baixar o zip da aplicação em 
+https://portal.tftecprime.com.br
+
+4- Instalar o Azure CLI
+Windows
+https://aka.ms/installazurecliwindows
+
+macOS
+https://learn.microsoft.com/pt-br/cli/azure/install-azure-cli-macos
+
+5- Realizar o deploy da aplicação para o WebApp
+Abrir o Powershell ou Terminal e executar o seguinte comando:
+```cmd
+az webapp deploy --resource-group <group-name> --name <app-name> --src-path <zip-package-path>
+```
+6- Ajustar application setting para endereço do Storage Account
 
 
+
+
+
+Executar o seguinte comando:
 
 
 # Segunda Aula - Modernizando sua aplicação com Cloud
