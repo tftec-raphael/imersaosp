@@ -108,11 +108,13 @@ Para todas as VMs iremos o tamanho B2S e utilizar o sistema operacional Windows 
    # UK SOUTH
    Nome: vm-intra01
    Região: uk-south
+   Zone: Zone 1
    Vnet: vnet-spoke01
    Subnet: sub-intra
    
    Nome: vm-intra02
    Região: uk-south
+   Zone: Zone 2
    Vnet: vnet-spoke01
    Subnet: sub-intra
 ```
@@ -121,11 +123,13 @@ Para todas as VMs iremos o tamanho B2S e utilizar o sistema operacional Windows 
    # JAPAN EAST
    Nome: vm-web01
    Região: japan-east
+   Zone: Zone 1
    Vnet: vnet-spoke02
    Subnet: sub-web
    
    Nome: vm-web02
    Região: japan-east
+   Zone: Zone 1
    Vnet: vnet-spoke02
    Subnet: sub-web
  ```  
@@ -253,16 +257,61 @@ https://github.com/tftec-raphael
   vm-web01
   vm-web02
 ```
-4- Liberar regra no NSG nsg-web:
+4- Liberar regra no NSG nsg-web
 ```cmd
 Criar regra, liberando qualquer origem, setar o destino com o Application Security Group e usar portas 80 e 443.
 ```
-5- Ajustar registro DNS externo:
+5- Ajustar registro DNS externo
 ```cmd
 Acessar a zona de DNS público e criar um registro do A.
 Usar Alias Record Set e apontar para o IP público do App Gateway.
 ```
 
+## STEP08 - Deploy Storage Account
+1- Deploy Storage Account
+```cmd
+   Nome: tfteclabsp01 (usar seu nome exclusivo)
+   Região: east-us
+   Performance: Standard
+   Redundancy: GRS - Marcar opção para  Read Access
+   Usar pvt enpdoint na vnet-hub e subnet sub-pvtendp
+   Storage Sub-Resource: Blob
+```
+2- Criar um Container blob
+```cmd
+   Nome: images
+```
+3- Criar um segundo private endpoint
+```cmd
+   Usar pvt enpdoint na vnet-hub e subnet sub-pvtendp
+   Storage Sub-Resource: File
+```
+4- Mapear Azure Files
+```cmd
+   Mapear o Azure Files nas seguintes VMs:
+   vm-intra01
+   vm-intra02
+```
+Validar se a conexão está apontando para ip interno
+
+## STEP09 - Deploy Aplicação Imagens (WebApp)
+1- Criar um App Service Plan
+```cmd
+   Nome: appplanimages
+   Operating System: Windows
+   Região: east-us
+   Pricing plan: Standard S1
+   vm-intra02
+```
+2- Criar um WebApp
+```cmd
+   Nome: tftecimages01 (usar seu nome exclusivo)
+   Publish: Code
+   Runtime Stack: .NET6
+   Região: east-us
+   Pricing plan: Standard S1
+   Escolher AppServicePlan já criado
+```
 
 
 
