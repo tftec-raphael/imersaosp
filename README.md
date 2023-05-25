@@ -253,10 +253,15 @@ https://github.com/tftec-raphael
   vm-web01
   vm-web02
 ```
-
-
-
-
+4- Liberar regra no NSG nsg-web:
+```cmd
+Criar regra, liberando qualquer origem, setar o destino com o Application Security Group e usar portas 80 e 443.
+```
+5- Ajustar registro DNS externo:
+```cmd
+Acessar a zona de DNS público e criar um registro do A.
+Usar Alias Record Set e apontar para o IP público do App Gateway.
+```
 
 
 
