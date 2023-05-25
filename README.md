@@ -201,6 +201,61 @@ https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-aspnetcore-
 https://github.com/tftec-raphael
 
 
+## STEP07 - Deploy Azure Load Balancer
+1- Deploy Load Balancer 
+```cmd
+   Nome: lb-intra
+   Tipo: Interno
+   Região: uk-south
+   Sku: Standard 
+   Backend: bepool-intra
+```
+
+## STEP08 - Deploy Nat Gateway
+1- Deploy Nat Gateway
+```cmd
+   Nome: nat-gw01
+   Região: uk-south
+   Tipo: Public IP Address
+```
+2- Associar a subnet sub-intra
+
+
+## STEP08 - Application Gateway
+1- Deplou Apg Gateway
+```cmd
+   Nome: appgw-site
+   Região: japan-east
+   Tier: Standard 2
+   Tipo: Public IP Address
+   Backend: bepool-web
+   
+   Rule01: rule-https-web
+   Listener: lst-443
+   Protocol: HTTPS - Escolher o certificado do Key Vault
+   Backend Setting: bset80
+   
+   
+   Rule01: rule-http-web
+   Listener: lst-80
+   Protocol: HTTPS
+   Backend Setting: bset80
+   Target type: Redirection
+```
+
+2- Criar um ASG
+```cmd
+   Nome: asg-web
+   Região: japan-east   
+```
+3- Associar a placa de rede das seguintes VMs ao ASG:
+```cmd
+  vm-web01
+  vm-web02
+```
+
+
+
 
 
 
