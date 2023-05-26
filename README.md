@@ -378,61 +378,95 @@ OBS: Deploy pode levar mais de 30 minutos
    - Configurar uma chave compartilhada para conexão VPN
 
 5- Criar um Local Network Gateway
-
+   ```cmd
+   Nome: lng01
+   Região: brazil-south
+   Endpoint: IP Address
+   IP address: IP Público da vm-fw
+   Address Space(s): 192.168.0.0/16
+   ```
+   
 6- Criar um Connection
+```cmd
+   Nome: VPNAzure-Onpremises
+   Connection Type: Site-to-Site
+   Shared key (PSK): mesmo criado na configurção do RAS
+   ```
 
+## STEP11 - Realizar ajustes do perring na VNETs 
+1- Ajustar Peering entre HUB e os Spokes (HUB)
+```cmd
+Virtual network gateway or Route Server
+Use this virtual network's gateway or Route Server
+```
+2- Ajustar Peering entre HUB e os Spokes (Spoke01 e Spoke02)
+```cmd
+Virtual network gateway or Route Server
+Use the remote virtual network's gateway or Route Server
+```
 
+## STEP12 - Deploy Route Table
+1- Criar Route Table
+```cmd
+Nome: rtable-onpremises
+Região: brazil-south
+```
+2- Criar rotas
+```cmd
+# ROTA REDE HUB
+Nome: route-hub
+Addres: 10.10.0.0/16
+Next Hope: Virtual Appliance
 
+# ROTA REDE SPOKE01
+Nome: route-spoke01
+Addres: 10.20.0.0/16
+Next Hope: Virtual Appliance
 
+# ROTA REDE SPOKE02
+Nome: route-spoke02
+Addres: 10.30.0.0/16
+Next Hope: Virtual Appliance
+```
+3- Associar Route Table a subnet
+```cmd
+Associar o Route Table a subnet sub-onpremises
+```
 
-Executar o seguinte comando:
+## STEP13 - Deploy VPN Point to Site
+   - Address pool: 172.16.0.0/24
+   - Tunnel type: OpenSSL
+   - Authentication type: Azure Active Directory
+     Dados do Azure Active Directory
+```cmd
+Tenant ID: https://login.microsoftonline.com/"your Directory ID"
+Audience: 41b23e61-6c1e-4545-b367-cd054e0ed4b4 
+Issuer: https://sts.windows.net/"your Directory ID"/
+```  
 
+## STEP14 - Deploy Azure Backup
 
-# Segunda Aula - Modernizando sua aplicação com Cloud
+## STEP15 - Container Registry
+  ```cmd
+   Nome: acrimagestftec01 (nome deve ser único)
+   Região: brazil-south
+   SKU: Standard
+   ```
 
-Modernizando a estrutura de aplicação e banco de dados utilizando serviços Cloud Azure PaaS.
+## STEP16 - Deploy Cluster AKS
+  ```cmd
+   Cluster present configuration: Standard
+   Nome: aks-app01
+   Região: brazil-south
+   AKS Pricing Tier: Standard
+   Kubernetes version: Default
+   Scale method: Autoscale
+   Network configuration: Kubenet
+   Container Registry:
+   ```
+## STEP17 - Deploy Azure SQL Database
 
-![TFTEC Cloud](https://github.com/raphasi/partiunuvem/blob/master/EstruturaApp_PaaS.png "Semana Partikunuvem")
+## STEP18 - Deploy WebApp
 
-## Etapa de Modernização do Banco de dados
-1 - Donwload e instalação do Net .Framework 4.8 na VM-DB:
+## STEP19 - Deploy APIM
 
-https://dotnet.microsoft.com/en-us/download/dotnet-framework/thank-you/net48-offline-installer
-
-2 - Download e instalaçao do DMA (Data Migration Assistant) na VM-DB:
-
-https://www.microsoft.com/en-us/download/confirmation.aspx?id=53595
-
-3 - Demais etapas detalhadas na Live:
-- Criar um uma instância de Server SQL para hospedar o Azure SQL Database
-- Criar uma instância de Azure SQL Database
-- Utilizar o DMA para rodar um Assessment de compatilbilidade do banco antes da migração
-- Parar a aplicação (iisreset /stop)
-- Utilizar o DMA para rodar a migração do Schema do banco
-- Utilizar o DMA para rodar a migração dos dados para o Azure SQL Database
-- Conferir os dados migrados
-- Desabilitar o serviço do SQL no servidor de oriem (IaaS)
-- Alterar o endereço na string de conexão do servidor de aplicação
-- Desligar a VM-DB
-
-## Etapa de Modernização da Aplicação
-1 - Donwload e instalação do App Service migration assistant na VM-APP:
-
-https://azure.microsoft.com/en-au/products/app-service/migration-tools/
-
-2 - Demais etapas detalhadas na Live:
-- Criar um App Service Plan
-- Fazer Upgrade do App Service Plan para uma instância S2 (Somente quem estiver com conta trial)
-- Criar um Projeto no Azure Migrate
-- Utilizar o App Service migration assistant para migração do site
-- Ajustar a string de conexão no seu Web APP
-- Desligar a VM-APP
-
-
-## Para todas as instruções referentes a como montar este ambiente, acompanhe as aulas do evento.
-
-Aula01 - https://www.youtube.com/watch?v=MWdrCNYmDGw
-
-Aula02 - https://www.youtube.com/watch?v=o0tqdyFVtGI
-
-Aula03 - https://www.youtube.com/watch?v=GXe13QbW8wk
