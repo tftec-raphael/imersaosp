@@ -452,6 +452,8 @@ OBS: Deploy pode levar mais de 30 minutos
    Região: brazil-south
    Vnet: vnet-onpremises
    Subnet: sub-onpremises
+   Usar um IP público stático
+   Habilitar o forwarding da placa de rede
    ```
 4- Instalar a feature de RAS na VM-FW
    - Criar uma interface: Azure utilizando o IP público do Virtual Network Gateway
@@ -475,6 +477,14 @@ OBS: Deploy pode levar mais de 30 minutos
    Nome: VPNAzure-Onpremises
    Connection Type: Site-to-Site
    Shared key (PSK): mesmo criado na configurção do RAS
+   ```
+ 7- Deploy VM Client
+  ```cmd
+   Nome: vm-clieny
+   Região: brazil-south
+   Sistema Operacional: Windows 11
+   Vnet: vnet-onpremises
+   Subnet: sub-onpremises
    ```
 
 ## STEP17 - Realizar ajustes do perring na VNETs 
