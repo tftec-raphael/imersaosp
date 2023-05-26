@@ -10,7 +10,7 @@ O desenho de arquitetura informado abaixo mostra alguns detalhes de como está c
 
 
 ## STEP01 - Criar a topologia de rede HUB-SPOKE
-Iremos utilizar pelo menos, 4 regiões diferentes do Azure, com o objetivo de atendermos as restrições de vCpus existentes em contas trial do Azure.
+Iremos utilizar pelo menos, 5 regiões diferentes do Azure, com o objetivo de atendermos as restrições de vCpus existentes em contas trial do Azure.
 
 1 - Criar a estrutura da VNET-HUB:
 
@@ -353,7 +353,7 @@ Usar Alias Record Set e apontar para o IP público do App Gateway.
 ## STEP14 - Deploy Storage Account
 1- Deploy Storage Account
 ```cmd
-   Nome: tfteclabsp01 (usar seu nome exclusivo)
+   Nome: tftecimages01 (usar seu nome exclusivo)
    Região: east-us
    Performance: Standard
    Redundancy: GRS - Marcar opção para  Read Access
@@ -364,7 +364,7 @@ Usar Alias Record Set e apontar para o IP público do App Gateway.
 ```cmd
    Nome: images
 ```
-3- Criar um segundo private endpoint
+3- Criar um private endpoint
 ```cmd
    Usar pvt enpdoint na vnet-hub e subnet sub-pvtendp
    Storage Sub-Resource: File
