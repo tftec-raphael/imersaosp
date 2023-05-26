@@ -98,7 +98,7 @@ Para todas as VMs iremos o tamanho B2S e utilizar o sistema operacional Windows 
 
 ```cmd
    # EAST US
-   Nome: vm-adds
+   Nome: vm-apps
    Região: east-us
    Vnet: vnet-hub
    Subnet: sub-srv
@@ -196,13 +196,21 @@ https://www.sslshopper.com/ssl-converter.html
 ```cmd
 Install-WindowsFeature -name Web-Server -IncludeManagementTools
 ```
-2- Instalar .net core:
 
-https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-aspnetcore-7.0.5-windows-hosting-bundle-installer
-
-3- Baixar código da aplicação aplicação do seguinte link do Github:
+2- Baixar código da aplicação aplicação do seguinte link do Github:
 
 https://github.com/tftec-raphael
+
+3- Copiar pasta da aplicação para o seguinte caminho
+```cmd
+c:\inetpub\wwwroot
+```
+
+4- Criar um novo site no IIS
+```cmd
+Nome: WebSite
+Porta: 80
+```
 
 
 ## STEP07 - Deploy Azure Load Balancer
@@ -214,7 +222,6 @@ https://github.com/tftec-raphael
    Sku: Standard 
    Backend: bepool-intra
 ```
-
 ## STEP08 - Deploy Nat Gateway
 1- Deploy Nat Gateway
 ```cmd
@@ -223,6 +230,72 @@ https://github.com/tftec-raphael
    Tipo: Public IP Address
 ```
 2- Associar a subnet sub-intra
+
+
+
+
+## STEP09 - Deploy Aplicação Web Site
+1- Instalar IIS nas VMS vm-intra01 e vm-intra02:
+```cmd
+Install-WindowsFeature -name Web-Server -IncludeManagementTools
+```
+2- Instalar .net core:
+
+https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-aspnetcore-7.0.5-windows-hosting-bundle-installer
+
+3- Baixar código da aplicação aplicação do seguinte link do Github:
+
+https://github.com/tftec-raphael
+
+4- Copiar pasta da aplicação para o seguinte caminho
+```cmd
+c:\inetpub\wwwroot
+```
+5- Criar um novo site no IIS
+```cmd
+Nome: WebSite
+Porta: 80
+```
+
+## STEP10 - Deploy SQL Server
+1- Criar um novo SQL Server
+```cmd
+Nome: sqlsrvtftec01 (usar um nome único)
+Location: east-us
+Authentication method: Use SQL authentication   
+   user: adminsql
+   pass: Partiunuvem@2023
+Allow Azure services and resources to access this server: YES
+
+```
+
+
+
+## STEP11 - Deploy SQL Database
+1- Deploy SQL Datyabase
+```cmd
+Nome: xxxxxxx
+Server: Usar o server criado no passo anterior
+Compute + storage: Usar o Service Tier - DTU BASED - BASIC 
+Backup storage redundancy: LRS
+Add current client IP address: YES
+Add Private Endpoint: pvt-sqldb
+Usar pvt enpdoint na vnet-hub e subnet sub-pvtendp
+```
+
+## STEP11 - Imoportar Database 
+1- Importar database aplicação WebSite
+```cmd
+Acessar o servidor vm-apps
+Nome: xxxxxxx
+Server: Usar o server criado no passo anterior
+Compute + storage: Usar o Service Tier - DTU BASED - BASIC 
+Backup storage redundancy: LRS
+Add current client IP address: YES
+Add Private Endpoint: pvt-sqldb
+Usar pvt enpdoint na vnet-hub e subnet sub-pvtendp
+```
+
 
 
 ## STEP08 - Application Gateway
@@ -464,7 +537,23 @@ Issuer: https://sts.windows.net/"your Directory ID"/
    Network configuration: Kubenet
    Container Registry:
    ```
+   
+   
+## STEP19 - Deploy APIM
+  ```cmd
+   Cluster present configuration: Standard
+   Nome: aks-app01
+   Região: brazil-south
+   AKS Pricing Tier: Standard
+   Kubernetes version: Default
+   Scale method: Autoscale
+   Network configuration: Kubenet
+   Cont
+   ```
+   
 ## STEP17 - Deploy Azure SQL Database
+
+
 
 ## STEP18 - Deploy WebApp
 
