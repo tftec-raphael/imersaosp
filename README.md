@@ -32,7 +32,7 @@ Iremos utilizar pelo menos, 4 regiões diferentes do Azure, com o objetivo de at
    Address Space: 10.10.2.0.0/24
    
    Subnet: sub-pvtendp
-   Address Space: 10.10.3.0.0/24
+   Address Space: 10.10.252.0.0/24
    
    Subnet: AzureBastionSubnet
    Address Space: 10.10.250.0.0/24
