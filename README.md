@@ -8,8 +8,22 @@ O desenho de arquitetura informado abaixo mostra alguns detalhes de como está c
 
 ![TFTEC Cloud](https://github.com/raphasi/partiunuvem/blob/master/EstruturaApp_IaaS.png "Semana Partikunuvem")
 
+## STEP01 - Criar um Resource Group e aplicar Azure Policy
+1- Criar Resource Group
+```cmd
+   # Criar um Resource Group
+   Nome: rg-azure
+   Região: East US
+ ```
+2- Aplicar Azure Policy
+   - Aplicar Policy no nível do Resource Group criado no passo anterior
+   - Aplicar policy para recursos herdarem a TAG do RG-AZURE (Inherit a tag from the resource group)
+   - Aplicar policy para limitar o tamanho das VMs para B2S e D2S_V3 (Allowed virtual machine size SKUs)
+         - Configurar mensagem de não complice: Você escolheu um SKU de VM não permitido, Utilize apenas B2S ou D2S_V3
+   
 
-## STEP01 - Criar a topologia de rede HUB-SPOKE
+
+## STEP02 - Criar a topologia de rede HUB-SPOKE
 Iremos utilizar pelo menos, 5 regiões diferentes do Azure, com o objetivo de atendermos as restrições de vCpus existentes em contas trial do Azure.
 
 1 - Criar a estrutura da VNET-HUB:
