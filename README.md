@@ -279,26 +279,36 @@ Server: Usar o server criado no passo anterior
 Compute + storage: Usar o Service Tier - DTU BASED - BASIC 
 Backup storage redundancy: LRS
 Add current client IP address: YES
-Add Private Endpoint: pvt-sqldb
+Add Private Endpoint: pvt-sqldb01
 Usar pvt enpdoint na vnet-hub e subnet sub-pvtendp
 ```
 
-## STEP11 - Imoportar Database 
-1- Importar database aplicação WebSite
+
+## STEP12 - Imoportar Database 
+1- Instalar o SSMS
 ```cmd
-Acessar o servidor vm-apps
-Nome: xxxxxxx
-Server: Usar o server criado no passo anterior
-Compute + storage: Usar o Service Tier - DTU BASED - BASIC 
-Backup storage redundancy: LRS
-Add current client IP address: YES
-Add Private Endpoint: pvt-sqldb
-Usar pvt enpdoint na vnet-hub e subnet sub-pvtendp
+Acessar o servidor vm-apps e instalar o SQL Management Studio
+```
+https://aka.ms/ssmsfullsetup
+
+2- Importar database aplicação WebSite
+```cmd
+Abrir o SQL Management Studio
+Alterar formato de autenticação para SQL authentication  
+Logar com usuário e senha criados no passo anterior
+Importar o database usando a opção de dacpac
+```
+3- Alterar connection string dos servidores
+```cmd
+Acessar as VMs vm-web01 e vm-web02
+Acessar o arquivo applicationsetting.json 
+Alterar a connection string o nome do banco de acordo com o banco criado
+Abrir o promt de comando como administrador e realizar executar o comando iisreset nas duas vms
+Testar abrir a aplicação usando localhost
 ```
 
 
-
-## STEP08 - Application Gateway
+## STEP13 - Application Gateway
 1- Deplou Apg Gateway
 ```cmd
    Nome: appgw-site
@@ -340,7 +350,7 @@ Acessar a zona de DNS público e criar um registro do A.
 Usar Alias Record Set e apontar para o IP público do App Gateway.
 ```
 
-## STEP08 - Deploy Storage Account
+## STEP14 - Deploy Storage Account
 1- Deploy Storage Account
 ```cmd
    Nome: tfteclabsp01 (usar seu nome exclusivo)
@@ -367,22 +377,21 @@ Usar Alias Record Set e apontar para o IP público do App Gateway.
 ```
 Validar se a conexão está apontando para ip interno
 
-## STEP09 - Deploy Aplicação Imagens (WebApp)
+
+## STEP15 - Deploy Aplicação Imagens (WebApp)
 1- Criar um App Service Plan
 ```cmd
    Nome: appplanimages
    Operating System: Windows
    Região: east-us
-   Pricing plan: Standard S1
-   vm-intra02
-```
+   Pricing plan: Standard S2
+   ```
 2- Criar um WebApp
 ```cmd
    Nome: tftecimages01 (usar seu nome exclusivo)
    Publish: Code
    Runtime Stack: .NET6
    Região: east-us
-   Pricing plan: Standard S1
    Escolher AppServicePlan já criado
 ```
 3- Deploy da aplicação
@@ -400,12 +409,14 @@ https://learn.microsoft.com/pt-br/cli/azure/install-azure-cli-macos
 5- Realizar o deploy da aplicação para o WebApp
 Abrir o Powershell ou Terminal e executar o seguinte comando:
 ```cmd
+az login
 az webapp deploy --resource-group <group-name> --name <app-name> --src-path <zip-package-path>
 ```
 6- Ajustar application setting para endereço do Storage Account
 
 
-## STEP10 - Deploy VPN Site to Site (S2S)
+
+## STEP16 - Deploy VPN Site to Site (S2S)
 1- Criar a estrutura da VNET-ONPREMISES
 
 ```cmd
@@ -466,7 +477,7 @@ OBS: Deploy pode levar mais de 30 minutos
    Shared key (PSK): mesmo criado na configurção do RAS
    ```
 
-## STEP11 - Realizar ajustes do perring na VNETs 
+## STEP17 - Realizar ajustes do perring na VNETs 
 1- Ajustar Peering entre HUB e os Spokes (HUB)
 ```cmd
 Virtual network gateway or Route Server
@@ -478,7 +489,7 @@ Virtual network gateway or Route Server
 Use the remote virtual network's gateway or Route Server
 ```
 
-## STEP12 - Deploy Route Table
+## STEP18 - Deploy Route Table
 1- Criar Route Table
 ```cmd
 Nome: rtable-onpremises
@@ -506,7 +517,7 @@ Next Hope: Virtual Appliance
 Associar o Route Table a subnet sub-onpremises
 ```
 
-## STEP13 - Deploy VPN Point to Site
+## STEP19 - Deploy VPN Point to Site
    - Address pool: 172.16.0.0/24
    - Tunnel type: OpenSSL
    - Authentication type: Azure Active Directory
@@ -517,29 +528,28 @@ Audience: 41b23e61-6c1e-4545-b367-cd054e0ed4b4
 Issuer: https://sts.windows.net/"your Directory ID"/
 ```  
 
-## STEP14 - Deploy Azure Backup
+## STEP20 - Deploy Azure Backup
 
-## STEP15 - Container Registry
+## STEP21 - Container Registry
   ```cmd
    Nome: acrimagestftec01 (nome deve ser único)
    Região: brazil-south
    SKU: Standard
    ```
 
-## STEP16 - Deploy Cluster AKS
+## STEP22 - Deploy Cluster AKS
   ```cmd
    Cluster present configuration: Standard
    Nome: aks-app01
-   Região: brazil-south
+   Região: australia-east
    AKS Pricing Tier: Standard
    Kubernetes version: Default
    Scale method: Autoscale
    Network configuration: Kubenet
    Container Registry:
    ```
-   
-   
-## STEP19 - Deploy APIM
+      
+## STEP23 - Deploy APIM
   ```cmd
    Cluster present configuration: Standard
    Nome: aks-app01
@@ -551,11 +561,39 @@ Issuer: https://sts.windows.net/"your Directory ID"/
    Cont
    ```
    
-## STEP17 - Deploy Azure SQL Database
+## STEP24 - Deploy Azure SQL Database
+```cmd
+Nome: xxxxxxx
+Server: Usar o server criado no passo anterior
+Compute + storage: Usar o Service Tier - DTU BASED - BASIC 
+Backup storage redundancy: LRS
+Add current client IP address: YES
+Add Private Endpoint: pvt-sqldb02
+Usar pvt enpdoint na vnet-hub e subnet sub-pvtendp
+```
 
 
+## STEP25 - Deploy WebApp
+1- Criar um WebApp
+```cmd
+   Nome: tftecapi01 (usar seu nome exclusivo)
+   Publish: Code
+   Runtime Stack: .NET6
+   Região: east-us
+   Escolher AppServicePlan já criado
+```
+2- Deploy da aplicação
+Baixar o zip da aplicação em 
+https://portal.tftecprime.com.br
 
-## STEP18 - Deploy WebApp
+3- Realizar o deploy da aplicação para o WebApp
+Abrir o Powershell ou Terminal e executar o seguinte comando:
+```cmd
+az login
+az webapp deploy --resource-group <group-name> --name <app-name> --src-path <zip-package-path>
+```
+4- Ajustar application setting para endereço do SQL Database
+
 
 ## STEP19 - Deploy APIM
 
